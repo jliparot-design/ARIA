@@ -79,10 +79,88 @@ def build_home_view(state):
         scrape_accessory["initial_option"] = {"text": {"type": "plain_text", "text": "Custom Search"}, "value": "prompt"}
 
     blocks = [
+        # --- Section 1: Welcome ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "👋 Welcome to ARIA",
+                "emoji": True
+            }
+        },
         {
             "type": "section",
-            "text": {"type": "mrkdwn", "text": "Welcome! I am **ARIA**, your *Autonomous Risk Intelligence Advisor*! :tada:\n\nARIA is an autonomous risk intelligence platform that continuously gathers, analyzes, and contextualizes emerging risks relevant to the **University of Michigan**. By combining University-owned data with trusted third-party intelligence sources, ARIA asynchronously researches user-defined risk topics, reasons about their potential impact on the University, and delivers executive-ready insights to support informed decision making by the Enterprise Strategic Management Team.\n\n**What can I help you with?**\n1. :mag: Perform a Google search on a specific risk topic\n2. :link: Assess and analyze a URL of your choice\n3. :gear: Configure my automated weekly intelligence gathering process *(runs every Sunday at 12:00 PM)*\n\n**How ARIA Works**\n• Every Sunday at **12:00 PM**, ARIA automatically retrieves configured risk topics from its database.\n• Topics are managed through the Slack Bot Home page, where users can configure searches and request on-demand analyses.\n• ARIA leverages **Firecrawl** to discover and collect relevant news articles and websites, gathering up to **5 high-quality sources per topic**.\n• These sources are processed through the **GPT Toolkit**, allowing multiple AI models to be used for analysis. ARIA is currently powered by **Claude Sonnet 4.6**.\n• ARIA evaluates each source, identifies potential impacts to the University of Michigan, generates structured risk assessments, and stores the results in a **Supabase** database.\n• The processed intelligence is then surfaced through the **2024 Cohorts Dashboard**, providing executive summaries, trend analysis, and risk heat matrices for stakeholders.\n\nVisit the **About** section or contact **riskintel@umich.edu** to learn more about ARIA."}
+            "text": {
+                "type": "mrkdwn",
+                "text": "_Autonomous Risk Intelligence Advisor_ :tada:\n\nARIA is an autonomous risk intelligence platform designed to help the *University of Michigan* identify, understand, and monitor emerging risks before they become operational challenges.\n\nRather than relying on manual research, ARIA continuously gathers intelligence from trusted online sources, analyzes the information using advanced AI, and determines how those risks may impact the University. The resulting intelligence is transformed into executive-ready summaries and visual dashboards that support strategic decision making for the *Enterprise Strategic Management Team (ESMT)*.\n\nBy combining University-owned infrastructure with multiple third-party intelligence providers, ARIA creates a single, automated pipeline that reduces manual effort while increasing the speed and quality of risk analysis."
+            }
         },
+        {"type": "divider"},
+
+        # --- Section 2: What Can I Help You With? ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "🚀 What Can I Help You With?",
+                "emoji": True
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "From this Slack application, you can:\n\n*🔎 Search for Risk Intelligence*\nPerform a Google search on any risk-related topic and receive an AI-generated assessment of the findings.\n\n*🌐 Analyze a Website*\nProvide a URL and ARIA will evaluate the content, summarize key information, identify relevant risks, and explain how the information may affect the University of Michigan.\n\n*⚙️ Configure Automated Intelligence Collection*\nManage the topics that ARIA monitors automatically every week."
+            }
+        },
+        {"type": "divider"},
+
+        # --- Section 3: How ARIA Works ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "🤖 How ARIA Works",
+                "emoji": True
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "ARIA operates through a fully automated intelligence pipeline.\n\n*1. Weekly Automation*\nEvery *Sunday at 12:00 PM*, a scheduled Cron job begins the intelligence gathering process.\n\n*2. Load Configured Topics*\nARIA queries its database and retrieves all user-configured risk topics. These topics are managed directly from the Slack Bot Home page. Examples include:\n• Cybersecurity\n• Artificial Intelligence\n• Higher Education\n• Federal Regulations\n• Supply Chain\n• Research Security\n• Geopolitical Events\n\n_Users can modify these topics at any time without changing the automation workflow._\n\n*3. Internet Intelligence Gathering*\nFor every configured topic, ARIA uses *Firecrawl* to search the web for relevant information. Up to *five relevant sources* are collected for every topic from:\n• News organizations\n• Government websites\n• Research publications\n• Industry reports\n• Technology blogs\n• Other trusted websites\n\n*4. AI Risk Assessment*\nThe collected information is passed into the *GPT Toolkit*, allowing ARIA to leverage multiple AI models for analysis. ARIA is currently powered by *Claude Sonnet 4.6*.\n\nDuring analysis, ARIA:\n• Summarizes each article\n• Identifies important events\n• Determines potential impacts\n• Evaluates the relevance to the University of Michigan\n• Produces structured executive-level risk intelligence\n\n*5. Data Storage*\nAfter analysis is complete, all intelligence is stored in a *Supabase* database. This creates a searchable historical repository of:\n• Risk assessments\n• Executive summaries\n• Source information\n• Risk metrics\n• Trend data\n\n*6. Dashboard Visualization*\nFinally, the processed intelligence is displayed within the *2024 Cohorts Dashboard*. This allows University leadership to quickly identify emerging risks and make informed strategic decisions based on:\n• Executive summaries\n• Risk heat matrices\n• Historical trends\n• Topic summaries\n• Centralized risk intelligence"
+            }
+        },
+        {"type": "divider"},
+
+        # --- Section 4: Why ARIA? ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "📈 Why ARIA?",
+                "emoji": True
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "ARIA automates one of the most time-consuming parts of enterprise risk management—research.\n\nInstead of manually searching dozens of websites every week, ARIA continuously gathers, analyzes, and organizes information into actionable intelligence specifically tailored to the University of Michigan.\n\nThe result is a faster, more consistent, and more comprehensive view of emerging risks."
+            }
+        },
+        {"type": "divider"},
+
+        # --- Section 5: Need More Info ---
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*ℹ️ Need More Information?*\nVisit the *About* section or contact riskintel@umich.edu to learn more about ARIA."
+            }
+        },
+
+        # --- Existing Application Logic Starts Below ---
         {"type": "header", "text": {"type": "plain_text", "text": "Risk Intelligence Scraper"}},
         {"type": "divider"},
         {"type": "section", "text": {"type": "mrkdwn", "text": "*Manual Scrape*"}},
@@ -289,7 +367,7 @@ def handle_manual_scrape(ack, body, logger, client):
 
     elif state["selected_method"] == "prompt":
         prompt_val = state.get("prompt_val", "")
-        if not prompt_val.strip():
+        if prompt_val is None or prompt_val.strip() == "":
             client.views_open(
                 trigger_id=body["trigger_id"],
                 view={
