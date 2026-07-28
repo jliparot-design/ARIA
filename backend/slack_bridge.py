@@ -11,10 +11,14 @@ app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
 
 # Define your internal n8n webhook URL
 
-N8N_WEBHOOK_URL = "" # you will need to add your internal n8n webhook url here once you have created the workflow
+N8N_WEBHOOK_URL = os.environ.get("N8N_WEBHOOK_URL") # you will need to add your internal n8n webhook url here once you have created the workflow
 
 ALL_CATEGORIES = [
-    {"text": {"type": "plain_text", "text": "AI"}, "value": "ai"},
+    {"text": {"type": "plain_text", "text": "AI Governance"}, "value": "ai_gov"},
+    {"text": {"type": "plain_text", "text": "AI Usage"}, "value": "ai_usage"},
+    {"text": {"type": "plain_text", "text": "Accreditation"}, "value": "accreditation"},
+    {"text": {"type": "plain_text", "text": "Antisemitism"}, "value": "antisemitism"},
+    {"text": {"type": "plain_text", "text": "Athletics Compliance"}, "value": "athletics_compliance"},
     {"text": {"type": "plain_text", "text": "Compliance"}, "value": "compliance"},
     {"text": {"type": "plain_text", "text": "Crisis Management"}, "value": "crisis_management"},
     {"text": {"type": "plain_text", "text": "Cryptocurrency"}, "value": "cryptocurrency"},
@@ -22,24 +26,26 @@ ALL_CATEGORIES = [
     {"text": {"type": "plain_text", "text": "Cybersecurity"}, "value": "cybersecurity"},
     {"text": {"type": "plain_text", "text": "Data Privacy"}, "value": "data_privacy"},
     {"text": {"type": "plain_text", "text": "Diversity, Equity, and Inclusion"}, "value": "dei"},
-    {"text": {"type": "plain_text", "text": "Emerging Risks"}, "value": "emerging_risks"},
-    {"text": {"type": "plain_text", "text": "Environmental, Social, and Governance"}, "value": "esg"},
-    {"text": {"type": "plain_text", "text": "Fraud"}, "value": "fraud"},
+    {"text": {"type": "plain_text", "text": "Emergency Management"}, "value": "emergency_management"},
+    {"text": {"type": "plain_text", "text": "Emerging"}, "value": "emerging"},
+    {"text": {"type": "plain_text", "text": "Financial Management"}, "value": "fin_mgnt"},
+    {"text": {"type": "plain_text", "text": "Foreign Influence"}, "value": "foreign_influence"},
+    {"text": {"type": "plain_text", "text": "Federal Policy"}, "value": "fed_policy"},
     {"text": {"type": "plain_text", "text": "Geopolitical"}, "value": "geopolitical"},
-    {"text": {"type": "plain_text", "text": "Healthcare"}, "value": "healthcare"},
+    {"text": {"type": "plain_text", "text": "Infrastructure"}, "value": "infrastructure"},
     {"text": {"type": "plain_text", "text": "Mental Health"}, "value": "mental_health"},
-    {"text": {"type": "plain_text", "text": "Internation"}, "value": "international"},
     {"text": {"type": "plain_text", "text": "Name Image and Likeness"}, "value": "nil"},
     {"text": {"type": "plain_text", "text": "Physical Security Threat"}, "value": "physical_security"},
-    {"text": {"type": "plain_text", "text": "Policy"}, "value": "policy"},
-    {"text": {"type": "plain_text", "text": "Post-Election"}, "value": "post-election"},
+    {"text": {"type": "plain_text", "text": "Policy Management"}, "value": "policy_management"},
+    {"text": {"type": "plain_text", "text": "Research Compliance and Safety"}, "value": "research_compliance"},
     {"text": {"type": "plain_text", "text": "Residential Life"}, "value": "residential_life"},
     {"text": {"type": "plain_text", "text": "Safety"}, "value": "safety"},
     {"text": {"type": "plain_text", "text": "Sexual Misconduct"}, "value": "sexual_misconduct"},
+    {"text": {"type": "plain_text", "text": "Sustainability"}, "value": "sustainability"},
     {"text": {"type": "plain_text", "text": "Succession Planning"}, "value": "succession_planning"},
-    {"text": {"type": "plain_text", "text": "Supply Chain"}, "value": "supply_chain"},
     {"text": {"type": "plain_text", "text": "Third Parties"}, "value": "third_parties"},
     {"text": {"type": "plain_text", "text": "Title IX"}, "value": "title_ix"},
+    {"text": {"type": "plain_text", "text": "Unions"}, "value": "unions"},
     {"text": {"type": "plain_text", "text": "Weather"}, "value": "weather"},
     {"text": {"type": "plain_text", "text": "Workforce Management"}, "value": "workforce_management"}
 ]
@@ -73,10 +79,88 @@ def build_home_view(state):
         scrape_accessory["initial_option"] = {"text": {"type": "plain_text", "text": "Custom Search"}, "value": "prompt"}
 
     blocks = [
+        # --- Section 1: Welcome ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "👋 Welcome to ARIA",
+                "emoji": True
+            }
+        },
         {
             "type": "section",
-            "text": {"type": "mrkdwn", "text": "Welcome! I am ARIA, your *Autonomus Risk Intelligence Advisor*! :tada: \nBelow you can ask me to: \n1. Preform a google search on a specific topic \n2. Ask me to assess a url of your choice \n3. Configure my information gathering process *(Starts every Sunday Afternoon)* \n\nFor more information, visit my *'about'* section\n\n\n"}
+            "text": {
+                "type": "mrkdwn",
+                "text": "_Autonomous Risk Intelligence Advisor_ :tada:\n\nARIA is an autonomous risk intelligence platform designed to help the *University of Michigan* identify, understand, and monitor emerging risks before they become operational challenges.\n\nRather than relying on manual research, ARIA continuously gathers intelligence from trusted online sources, analyzes the information using advanced AI, and determines how those risks may impact the University. The resulting intelligence is transformed into executive-ready summaries and visual dashboards that support strategic decision making for the *Enterprise Strategic Management Team (ESMT)*.\n\nBy combining University-owned infrastructure with multiple third-party intelligence providers, ARIA creates a single, automated pipeline that reduces manual effort while increasing the speed and quality of risk analysis."
+            }
         },
+        {"type": "divider"},
+
+        # --- Section 2: What Can I Help You With? ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "🚀 What Can I Help You With?",
+                "emoji": True
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "From this Slack application, you can:\n\n*🔎 Search for Risk Intelligence*\nPerform a Google search on any risk-related topic and receive an AI-generated assessment of the findings.\n\n*🌐 Analyze a Website*\nProvide a URL and ARIA will evaluate the content, summarize key information, identify relevant risks, and explain how the information may affect the University of Michigan.\n\n*⚙️ Configure Automated Intelligence Collection*\nManage the topics that ARIA monitors automatically every week."
+            }
+        },
+        {"type": "divider"},
+
+        # --- Section 3: How ARIA Works ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "🤖 How ARIA Works",
+                "emoji": True
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "ARIA operates through a fully automated intelligence pipeline.\n\n*1. Weekly Automation*\nEvery *Sunday at 12:00 PM*, a scheduled Cron job begins the intelligence gathering process.\n\n*2. Load Configured Topics*\nARIA queries its database and retrieves all user-configured risk topics. These topics are managed directly from the Slack Bot Home page. Examples include:\n• Cybersecurity\n• Artificial Intelligence\n• Higher Education\n• Federal Regulations\n• Supply Chain\n• Research Security\n• Geopolitical Events\n\n_Users can modify these topics at any time without changing the automation workflow._\n\n*3. Internet Intelligence Gathering*\nFor every configured topic, ARIA uses *Firecrawl* to search the web for relevant information. Up to *five relevant sources* are collected for every topic from:\n• News organizations\n• Government websites\n• Research publications\n• Industry reports\n• Technology blogs\n• Other trusted websites\n\n*4. AI Risk Assessment*\nThe collected information is passed into the *GPT Toolkit*, allowing ARIA to leverage multiple AI models for analysis. ARIA is currently powered by *Claude Sonnet 4.6*.\n\nDuring analysis, ARIA:\n• Summarizes each article\n• Identifies important events\n• Determines potential impacts\n• Evaluates the relevance to the University of Michigan\n• Produces structured executive-level risk intelligence\n\n*5. Data Storage*\nAfter analysis is complete, all intelligence is stored in a *Supabase* database. This creates a searchable historical repository of:\n• Risk assessments\n• Executive summaries\n• Source information\n• Risk metrics\n• Trend data\n\n*6. Dashboard Visualization*\nFinally, the processed intelligence is displayed within the *2024 Cohorts Dashboard*. This allows University leadership to quickly identify emerging risks and make informed strategic decisions based on:\n• Executive summaries\n• Risk heat matrices\n• Historical trends\n• Topic summaries\n• Centralized risk intelligence"
+            }
+        },
+        {"type": "divider"},
+
+        # --- Section 4: Why ARIA? ---
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "📈 Why ARIA?",
+                "emoji": True
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "ARIA automates one of the most time-consuming parts of enterprise risk management—research.\n\nInstead of manually searching dozens of websites every week, ARIA continuously gathers, analyzes, and organizes information into actionable intelligence specifically tailored to the University of Michigan.\n\nThe result is a faster, more consistent, and more comprehensive view of emerging risks."
+            }
+        },
+        {"type": "divider"},
+
+        # --- Section 5: Need More Info ---
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*ℹ️ Need More Information?*\nVisit the *About* section or contact riskintel@umich.edu to learn more about ARIA."
+            }
+        },
+
+        # --- Existing Application Logic Starts Below ---
         {"type": "header", "text": {"type": "plain_text", "text": "Risk Intelligence Scraper"}},
         {"type": "divider"},
         {"type": "section", "text": {"type": "mrkdwn", "text": "*Manual Scrape*"}},
@@ -260,39 +344,92 @@ def handle_manual_scrape(ack, body, logger, client):
     ack()
     state = extract_state(body)
     payload = None
-    pattern = r"^(www\.)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(/.*)?$"
+    pattern = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"
 
+    # 1. VALIDATE INPUTS AND HANDLE ERRORS EARLY
+    if state["selected_method"] == "url":
+        url_val = state.get("url_val", "")
+        # Check if it's empty or fails the regex pattern
+        if not url_val or not re.match(pattern, url_val):
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Invalid Input"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": ":warning: *The URL provided is in an incorrect format.*\n\nPlease try again with a valid web address (e.g., `https://example.com`)."}}
+                    ]
+                }
+            )
+            return # Exit the function here so the webhook is not called
+        
+        payload = {"job": "url", "url": url_val}
 
-    if state["selected_method"] == "url" and state["url_val"]:
-        if re.match(pattern, state["url_val"]):
-            payload = {"job": "url","url": state["url_val"]}
-
-    elif state["selected_method"] == "prompt" and state["prompt_val"]:
-        payload = {"job": "prompt", "prompt": state["prompt_val"]}
+    elif state["selected_method"] == "prompt":
+        prompt_val = state.get("prompt_val", "")
+        if prompt_val is None or prompt_val.strip() == "":
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Invalid Input"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": ":warning: *Your search prompt is empty.*\n\nPlease enter a custom search phrase before starting."}}
+                    ]
+                }
+            )
+            return
+            
+        payload = {"job": "prompt", "prompt": prompt_val}
 
     else:
-        logger.error("No valid URL or Prompt input was found to scrape.")
+        logger.error("No valid scrape method selected.")
         return
 
+    # 2. OPEN THE PROCESSING MODAL
+    try:
+        view_response = client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Processing Request"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": "Your job is being processed. Go to this link to see your analysis once complete.\n\nLink: https://riskintel.netlify.app/"}}
+                ]
+            }
+        )
+    except Exception as e:
+        logger.error(f"Failed to open modal: {e}")
+        return
+
+    # 3. SEND THE REQUEST TO N8N
     try:
         response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
-        if response.status_code == 200:
-            print("Processing your request...")
-        else:
+        
+        if response.status_code != 200:
             print(f"n8n responded with status code: {response.status_code}")
+            client.views_update(
+                view_id=view_response["view"]["id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": f"Error: Code {response.status_code}"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": "Contact riskintel@umich.edu for assistance."}}
+                    ]
+                }
+            )
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to internal n8n: {e}")
-
-    client.views_open(
-        trigger_id=body["trigger_id"],
-        view={
-            "type": "modal",
-            "title": {"type": "plain_text", "text": "Job in Process"},
-            "blocks": [
-                {"type": "section", "text": {"type": "mrkdwn", "text": "Your job is being processed. Go to this link to see your analysis.\n\nLink: https://riskintel.netlify.app/"}}
-            ]
-        }
-    )
+        client.views_update(
+            view_id=view_response["view"]["id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "ERROR: Connection failed"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"n8n connection failed: {str(e)}"}}
+                ]
+            }
+        )
 
 @app.action("save_async")
 def handle_save_async(ack, body, client, logger):
@@ -305,28 +442,52 @@ def handle_save_async(ack, body, client, logger):
         "async_enabled": state["is_async"]
     }
 
-    try:
-        response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
-        if response.status_code == 200:
-            logger.info("Processing your request...")
-        else:
-            logger.error(f"n8n responded with status code: {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Error connecting to internal n8n: {e}")
-
+    # 2. OPEN THE PROCESSING MODAL
     display_text = ", ".join(state["categories"]) if state["categories"] else "None"
     async_status_text = "Enabled" if state["is_async"] else "Disabled"
+    try:
+        view_response = client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Processing Request"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"*Async Mode:* {async_status_text}\n*Categories:* {display_text}"}}
+                ]
+            }
+        )
+    except Exception as e:
+        logger.error(f"Failed to open modal: {e}")
+        return
 
-    client.views_open(
-        trigger_id=body["trigger_id"],
-        view={
-            "type": "modal",
-            "title": {"type": "plain_text", "text": "Configuration Saved"},
-            "blocks": [
-                {"type": "section", "text": {"type": "mrkdwn", "text": f"*Async Mode:* {async_status_text}\n*Categories:* {display_text}"}}
-            ]
-        }
-    )
+    # 3. SEND THE REQUEST TO N8N
+    try:
+        response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
+        
+        if response.status_code != 200:
+            print(f"n8n responded with status code: {response.status_code}")
+            client.views_update(
+                view_id=view_response["view"]["id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": f"Error: Code {response.status_code}"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": "Contact riskintel@umich.edu for assistance."}}
+                    ]
+                }
+            )
+    except requests.exceptions.RequestException as e:
+        print(f"Error connecting to internal n8n: {e}")
+        client.views_update(
+            view_id=view_response["view"]["id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "ERROR: Connection failed"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"n8n connection failed: {str(e)}"}}
+                ]
+            }
+        )
 
 # --- Silent Acknowledgment Handlers ---
 @app.action("url")
