@@ -62,7 +62,7 @@ const MainReport = () => {
         </div>
       </div>
       <h2 className="text-2xl font-primary font-semibold">Summary</h2>
-      <p className="my-2 font-secondary text-lg">{selectedRisk.summary}</p>
+      <p className="my-2 font-secondary text-lg leading-[2.0]">{selectedRisk.summary}</p>
       {selectedRisk.regions && (
         <div>
           <h3 className="text-2xl font-primary font-semibold">
