@@ -266,40 +266,75 @@ def handle_manual_scrape(ack, body, logger, client):
     ack()
     state = extract_state(body)
     payload = None
-    pattern = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"  # Basic URL validation regex
+    pattern = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"
 
-    if state["selected_method"] == "url" and state["url_val"]:
-        if re.match(pattern, state["url_val"]):
-            payload = {"job": "url","url": state["url_val"]}
-
-    elif state["selected_method"] == "prompt" and state["prompt_val"]:
-        payload = {"job": "prompt", "prompt": state["prompt_val"]}
-
-    else:
-        logger.error("No valid URL or Prompt input was found to scrape.")
-        return
-
-    try:
-        response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
-        if response.status_code == 200:
-            print("Processing your request...")
+    # 1. VALIDATE INPUTS AND HANDLE ERRORS EARLY
+    if state["selected_method"] == "url":
+        url_val = state.get("url_val", "")
+        # Check if it's empty or fails the regex pattern
+        if not url_val or not re.match(pattern, url_val):
             client.views_open(
                 trigger_id=body["trigger_id"],
                 view={
                     "type": "modal",
-                    "title": {"type": "plain_text", "text": "Job in Process"},
+                    "title": {"type": "plain_text", "text": "Invalid Input"},
                     "blocks": [
-                        {"type": "section", "text": {"type": "mrkdwn", "text": "Your job is being processed. Go to this link to see your analysis.\n\nLink: https://riskintel.netlify.app/"}}
+                        {"type": "section", "text": {"type": "mrkdwn", "text": ":warning: *The URL provided is in an incorrect format.*\n\nPlease try again with a valid web address (e.g., `https://example.com`)."}}
                     ]
                 }
             )
-        else:
-            print(f"n8n responded with status code: {response.status_code}")
+            return # Exit the function here so the webhook is not called
+        
+        payload = {"job": "url", "url": url_val}
+
+    elif state["selected_method"] == "prompt":
+        prompt_val = state.get("prompt_val", "")
+        if not prompt_val.strip():
             client.views_open(
                 trigger_id=body["trigger_id"],
                 view={
                     "type": "modal",
-                    "title": {"type": "plain_text", "text": f"AI Workflow Error. Code {response.status_code}"},
+                    "title": {"type": "plain_text", "text": "Invalid Input"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": ":warning: *Your search prompt is empty.*\n\nPlease enter a custom search phrase before starting."}}
+                    ]
+                }
+            )
+            return
+            
+        payload = {"job": "prompt", "prompt": prompt_val}
+
+    else:
+        logger.error("No valid scrape method selected.")
+        return
+
+    # 2. OPEN THE PROCESSING MODAL
+    try:
+        view_response = client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Processing Request"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": "Your job is being processed. Go to this link to see your analysis once complete.\n\nLink: https://riskintel.netlify.app/"}}
+                ]
+            }
+        )
+    except Exception as e:
+        logger.error(f"Failed to open modal: {e}")
+        return
+
+    # 3. SEND THE REQUEST TO N8N
+    try:
+        response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
+        
+        if response.status_code != 200:
+            print(f"n8n responded with status code: {response.status_code}")
+            client.views_update(
+                view_id=view_response["view"]["id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": f"Error: Code {response.status_code}"},
                     "blocks": [
                         {"type": "section", "text": {"type": "mrkdwn", "text": "Contact riskintel@umich.edu for assistance."}}
                     ]
@@ -307,13 +342,13 @@ def handle_manual_scrape(ack, body, logger, client):
             )
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to internal n8n: {e}")
-        client.views_open(
-            trigger_id=body["trigger_id"],
+        client.views_update(
+            view_id=view_response["view"]["id"],
             view={
                 "type": "modal",
-                "title": {"type": "plain_text", "text": "ERROR: n8n connection failed"},
+                "title": {"type": "plain_text", "text": "ERROR: Connection failed"},
                 "blocks": [
-                    {"type": "section", "text": {"type": "mrkdwn", "text": {e}}}
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"n8n connection failed: {str(e)}"}}
                 ]
             }
         )
@@ -329,31 +364,35 @@ def handle_save_async(ack, body, client, logger):
         "async_enabled": state["is_async"]
     }
 
+    # 2. OPEN THE PROCESSING MODAL
     display_text = ", ".join(state["categories"]) if state["categories"] else "None"
     async_status_text = "Enabled" if state["is_async"] else "Disabled"
+    try:
+        view_response = client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Processing Request"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"*Async Mode:* {async_status_text}\n*Categories:* {display_text}"}}
+                ]
+            }
+        )
+    except Exception as e:
+        logger.error(f"Failed to open modal: {e}")
+        return
 
-
+    # 3. SEND THE REQUEST TO N8N
     try:
         response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
-        if response.status_code == 200:
-            print("Processing your request...")
-            client.views_open(
-                trigger_id=body["trigger_id"],
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "Job in Process"},
-                    "blocks": [
-                        {"type": "section", "text": {"type": "mrkdwn", "text": f"*Async Mode:* {async_status_text}\n*Categories:* {display_text}"}}
-                    ]
-                }
-            )
-        else:
+        
+        if response.status_code != 200:
             print(f"n8n responded with status code: {response.status_code}")
-            client.views_open(
-                trigger_id=body["trigger_id"],
+            client.views_update(
+                view_id=view_response["view"]["id"],
                 view={
                     "type": "modal",
-                    "title": {"type": "plain_text", "text": f"AI Workflow Error. Code {response.status_code}"},
+                    "title": {"type": "plain_text", "text": f"Error: Code {response.status_code}"},
                     "blocks": [
                         {"type": "section", "text": {"type": "mrkdwn", "text": "Contact riskintel@umich.edu for assistance."}}
                     ]
@@ -361,13 +400,13 @@ def handle_save_async(ack, body, client, logger):
             )
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to internal n8n: {e}")
-        client.views_open(
-            trigger_id=body["trigger_id"],
+        client.views_update(
+            view_id=view_response["view"]["id"],
             view={
                 "type": "modal",
-                "title": {"type": "plain_text", "text": "ERROR: n8n connection failed"},
+                "title": {"type": "plain_text", "text": "ERROR: Connection failed"},
                 "blocks": [
-                    {"type": "section", "text": {"type": "mrkdwn", "text": {e}}}
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"n8n connection failed: {str(e)}"}}
                 ]
             }
         )
