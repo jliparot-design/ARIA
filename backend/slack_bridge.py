@@ -11,10 +11,14 @@ app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
 
 # Define your internal n8n webhook URL
 
-N8N_WEBHOOK_URL = "" # you will need to add your internal n8n webhook url here once you have created the workflow
+N8N_WEBHOOK_URL = os.environ.get("N8N_WEBHOOK_URL") # you will need to add your internal n8n webhook url here once you have created the workflow
 
 ALL_CATEGORIES = [
-    {"text": {"type": "plain_text", "text": "AI"}, "value": "ai"},
+    {"text": {"type": "plain_text", "text": "AI Governance"}, "value": "ai_gov"},
+    {"text": {"type": "plain_text", "text": "AI Usage"}, "value": "ai_usage"},
+    {"text": {"type": "plain_text", "text": "Accreditation"}, "value": "accreditation"},
+    {"text": {"type": "plain_text", "text": "Antisemitism"}, "value": "antisemitism"},
+    {"text": {"type": "plain_text", "text": "Athletics Compliance"}, "value": "athletics_compliance"},
     {"text": {"type": "plain_text", "text": "Compliance"}, "value": "compliance"},
     {"text": {"type": "plain_text", "text": "Crisis Management"}, "value": "crisis_management"},
     {"text": {"type": "plain_text", "text": "Cryptocurrency"}, "value": "cryptocurrency"},
@@ -22,24 +26,26 @@ ALL_CATEGORIES = [
     {"text": {"type": "plain_text", "text": "Cybersecurity"}, "value": "cybersecurity"},
     {"text": {"type": "plain_text", "text": "Data Privacy"}, "value": "data_privacy"},
     {"text": {"type": "plain_text", "text": "Diversity, Equity, and Inclusion"}, "value": "dei"},
-    {"text": {"type": "plain_text", "text": "Emerging Risks"}, "value": "emerging_risks"},
-    {"text": {"type": "plain_text", "text": "Environmental, Social, and Governance"}, "value": "esg"},
-    {"text": {"type": "plain_text", "text": "Fraud"}, "value": "fraud"},
+    {"text": {"type": "plain_text", "text": "Emergency Management"}, "value": "emergency_management"},
+    {"text": {"type": "plain_text", "text": "Emerging"}, "value": "emerging"},
+    {"text": {"type": "plain_text", "text": "Financial Management"}, "value": "fin_mgnt"},
+    {"text": {"type": "plain_text", "text": "Foreign Influence"}, "value": "foreign_influence"},
+    {"text": {"type": "plain_text", "text": "Federal Policy"}, "value": "fed_policy"},
     {"text": {"type": "plain_text", "text": "Geopolitical"}, "value": "geopolitical"},
-    {"text": {"type": "plain_text", "text": "Healthcare"}, "value": "healthcare"},
+    {"text": {"type": "plain_text", "text": "Infrastructure"}, "value": "infrastructure"},
     {"text": {"type": "plain_text", "text": "Mental Health"}, "value": "mental_health"},
-    {"text": {"type": "plain_text", "text": "Internation"}, "value": "international"},
     {"text": {"type": "plain_text", "text": "Name Image and Likeness"}, "value": "nil"},
     {"text": {"type": "plain_text", "text": "Physical Security Threat"}, "value": "physical_security"},
-    {"text": {"type": "plain_text", "text": "Policy"}, "value": "policy"},
-    {"text": {"type": "plain_text", "text": "Post-Election"}, "value": "post-election"},
+    {"text": {"type": "plain_text", "text": "Policy Management"}, "value": "policy_management"},
+    {"text": {"type": "plain_text", "text": "Research Compliance and Safety"}, "value": "research_compliance"},
     {"text": {"type": "plain_text", "text": "Residential Life"}, "value": "residential_life"},
     {"text": {"type": "plain_text", "text": "Safety"}, "value": "safety"},
     {"text": {"type": "plain_text", "text": "Sexual Misconduct"}, "value": "sexual_misconduct"},
+    {"text": {"type": "plain_text", "text": "Sustainability"}, "value": "sustainability"},
     {"text": {"type": "plain_text", "text": "Succession Planning"}, "value": "succession_planning"},
-    {"text": {"type": "plain_text", "text": "Supply Chain"}, "value": "supply_chain"},
     {"text": {"type": "plain_text", "text": "Third Parties"}, "value": "third_parties"},
     {"text": {"type": "plain_text", "text": "Title IX"}, "value": "title_ix"},
+    {"text": {"type": "plain_text", "text": "Unions"}, "value": "unions"},
     {"text": {"type": "plain_text", "text": "Weather"}, "value": "weather"},
     {"text": {"type": "plain_text", "text": "Workforce Management"}, "value": "workforce_management"}
 ]
@@ -75,7 +81,7 @@ def build_home_view(state):
     blocks = [
         {
             "type": "section",
-            "text": {"type": "mrkdwn", "text": "Welcome! I am ARIA, your *Autonomus Risk Intelligence Advisor*! :tada: \nBelow you can ask me to: \n1. Preform a google search on a specific topic \n2. Ask me to assess a url of your choice \n3. Configure my information gathering process *(Starts every Sunday Afternoon)* \n\nFor more information, visit my *'about'* section\n\n\n"}
+            "text": {"type": "mrkdwn", "text": "Welcome! I am **ARIA**, your *Autonomous Risk Intelligence Advisor*! :tada:\n\nARIA is an autonomous risk intelligence platform that continuously gathers, analyzes, and contextualizes emerging risks relevant to the **University of Michigan**. By combining University-owned data with trusted third-party intelligence sources, ARIA asynchronously researches user-defined risk topics, reasons about their potential impact on the University, and delivers executive-ready insights to support informed decision making by the Enterprise Strategic Management Team.\n\n**What can I help you with?**\n1. :mag: Perform a Google search on a specific risk topic\n2. :link: Assess and analyze a URL of your choice\n3. :gear: Configure my automated weekly intelligence gathering process *(runs every Sunday at 12:00 PM)*\n\n**How ARIA Works**\n• Every Sunday at **12:00 PM**, ARIA automatically retrieves configured risk topics from its database.\n• Topics are managed through the Slack Bot Home page, where users can configure searches and request on-demand analyses.\n• ARIA leverages **Firecrawl** to discover and collect relevant news articles and websites, gathering up to **5 high-quality sources per topic**.\n• These sources are processed through the **GPT Toolkit**, allowing multiple AI models to be used for analysis. ARIA is currently powered by **Claude Sonnet 4.6**.\n• ARIA evaluates each source, identifies potential impacts to the University of Michigan, generates structured risk assessments, and stores the results in a **Supabase** database.\n• The processed intelligence is then surfaced through the **2024 Cohorts Dashboard**, providing executive summaries, trend analysis, and risk heat matrices for stakeholders.\n\nVisit the **About** section or contact **riskintel@umich.edu** to learn more about ARIA."}
         },
         {"type": "header", "text": {"type": "plain_text", "text": "Risk Intelligence Scraper"}},
         {"type": "divider"},
@@ -260,8 +266,7 @@ def handle_manual_scrape(ack, body, logger, client):
     ack()
     state = extract_state(body)
     payload = None
-    pattern = r"^(www\.)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(/.*)?$"
-
+    pattern = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"  # Basic URL validation regex
 
     if state["selected_method"] == "url" and state["url_val"]:
         if re.match(pattern, state["url_val"]):
@@ -278,21 +283,40 @@ def handle_manual_scrape(ack, body, logger, client):
         response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
         if response.status_code == 200:
             print("Processing your request...")
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Job in Process"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": "Your job is being processed. Go to this link to see your analysis.\n\nLink: https://riskintel.netlify.app/"}}
+                    ]
+                }
+            )
         else:
             print(f"n8n responded with status code: {response.status_code}")
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": f"AI Workflow Error. Code {response.status_code}"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": "Contact riskintel@umich.edu for assistance."}}
+                    ]
+                }
+            )
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to internal n8n: {e}")
-
-    client.views_open(
-        trigger_id=body["trigger_id"],
-        view={
-            "type": "modal",
-            "title": {"type": "plain_text", "text": "Job in Process"},
-            "blocks": [
-                {"type": "section", "text": {"type": "mrkdwn", "text": "Your job is being processed. Go to this link to see your analysis.\n\nLink: https://riskintel.netlify.app/"}}
-            ]
-        }
-    )
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "ERROR: n8n connection failed"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": {e}}}
+                ]
+            }
+        )
 
 @app.action("save_async")
 def handle_save_async(ack, body, client, logger):
@@ -305,28 +329,48 @@ def handle_save_async(ack, body, client, logger):
         "async_enabled": state["is_async"]
     }
 
-    try:
-        response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
-        if response.status_code == 200:
-            logger.info("Processing your request...")
-        else:
-            logger.error(f"n8n responded with status code: {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Error connecting to internal n8n: {e}")
-
     display_text = ", ".join(state["categories"]) if state["categories"] else "None"
     async_status_text = "Enabled" if state["is_async"] else "Disabled"
 
-    client.views_open(
-        trigger_id=body["trigger_id"],
-        view={
-            "type": "modal",
-            "title": {"type": "plain_text", "text": "Configuration Saved"},
-            "blocks": [
-                {"type": "section", "text": {"type": "mrkdwn", "text": f"*Async Mode:* {async_status_text}\n*Categories:* {display_text}"}}
-            ]
-        }
-    )
+
+    try:
+        response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
+        if response.status_code == 200:
+            print("Processing your request...")
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Job in Process"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": f"*Async Mode:* {async_status_text}\n*Categories:* {display_text}"}}
+                    ]
+                }
+            )
+        else:
+            print(f"n8n responded with status code: {response.status_code}")
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": f"AI Workflow Error. Code {response.status_code}"},
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": "Contact riskintel@umich.edu for assistance."}}
+                    ]
+                }
+            )
+    except requests.exceptions.RequestException as e:
+        print(f"Error connecting to internal n8n: {e}")
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "ERROR: n8n connection failed"},
+                "blocks": [
+                    {"type": "section", "text": {"type": "mrkdwn", "text": {e}}}
+                ]
+            }
+        )
 
 # --- Silent Acknowledgment Handlers ---
 @app.action("url")
