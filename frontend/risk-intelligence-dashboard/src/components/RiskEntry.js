@@ -51,15 +51,13 @@ const RiskEntry = ({ rank, risk }) => {
           <p className="font-secondary text-base line-clamp-2">
             {risk.summary}
           </p>
-          {risk.industries &&
-            risk.industries.map((tag, index) => {
-              if (selectedRisk && selectedRisk.id === risk.id) {
-                return (
-                  <Chip key={index} text={tag} selected={true} oneline={true} />
-                );
-              }
-              return <Chip key={index} text={tag} oneline={true} />;
-            })}
+            {risk.topic && (
+              <Chip
+                text={risk.topic}
+                selected={selectedRisk && selectedRisk.id === risk.id}
+                oneline={true}
+              />
+            )}
         </div>
         {!selectedRisk && (
           <div className="mb-5">
